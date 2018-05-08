@@ -1,10 +1,11 @@
 import sys
+import time
+
 from itertools import chain
 
 from fca.io.transformers import List2PartitionsTransformer
 from fca.io.file_models import FileModelFactory
-from fca.defs.patterns.hypergraphs import TrimmedPartitionPattern as PartitionPattern
-# from fca.defs.patterns.hypergraphs import PartitionPattern
+from fca.defs.patterns.hypergraphs import TrimmedPartitionPattern
 from fca.algorithms.previous_closure import PSPreviousClosure
 from lib.minimum_hitting_set import berges_mhs as my_mhs
 from fca.io import read_representations
@@ -14,10 +15,41 @@ import csv
 
 from uis_miner_naive import find_uis, print_premises
 
+
+
+class StrippedPartitions(TrimmedPartitionPattern):
+    '''
+    Same as stripped partitions buy with a much more clever intersection.
+    Algorithm defined in
+    [1] Huhtala - TANE: An Efficient Algoritm for Functional and Approximate Dependencies
+    '''    
+    @classmethod
+    def intersection(cls, desc1, desc2):
+        '''
+        Procedure STRIPPED_PRODUCT defined in [1]
+        '''
+        new_desc = []
+        T = {}
+        S = {}
+        for i, k in enumerate(desc1):
+            for t in k:
+                T[t] = i
+            S[i] = set([])
+        for i, k in enumerate(desc2):
+            for t in k:
+                if T.get(t, None) is not None:
+                    S[T[t]].add(t)
+            for t in k:
+                if T.get(t, None) is not None:
+                    if len(S[T[t]]) > 1:
+                        new_desc.append(S[T[t]])
+                    S[T[t]] = set([])
+        return new_desc
+
 if __name__ == "__main__":
 
     filepath = sys.argv[1]
-
+    t0 = time.time()
     transposed = True
 
     fctx = PatternStructureModel(
@@ -35,14 +67,14 @@ if __name__ == "__main__":
 
     ondisk_poset = PSPreviousClosure(
         fctx,
-        pattern=PartitionPattern,
+        pattern=StrippedPartitions,
         ondisk=True,
         ondisk_kwargs={
             'output_path':'/tmp',
             'output_fname':None,
             'write_extent':False
         },
-        silent=False
+        silent=True
     ).poset
 
     ctx = []
@@ -59,5 +91,6 @@ if __name__ == "__main__":
             ctx.append(set([int(i.strip()) for i in lst.split(',') if ',' in lst]))
 
     print_premises(find_uis(ctx))
-    print "{} concepts in the representation context".format(len(ctx))
+    print ("\t=> Execution Time: {} seconds".format(time.time()-t0))
+    print "\t=> {} concepts in the representation context".format(len(ctx))
     print '{}'.format(fout_name)

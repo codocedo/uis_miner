@@ -79,7 +79,7 @@ def all_g_downarrow_m(ctx, M):
                 break
         # gdarrowm[g] = candidates
         map (lambda c: mdarrowd.setdefault(c, set([])).add(g), candidates)
-    print "COUNT SUBSETS", count_subsets
+    #print "COUNT SUBSETS", count_subsets
     return mdarrowd
 
 def find_uis(ctx):
@@ -133,9 +133,9 @@ def print_premises(premise_iterator):
     rules = []
     for premise, consequence in premise_iterator: #sorted(premises.items(), key=lambda s: sorted((len(s[0]),s[0]))):
         rules.append('{} -> {}'.format(alpha(premise), alpha([consequence])).strip())
-    for rule in sorted(rules, key=lambda s: (len(s), s)):
-        print(rule)
-    print len(rules), 'rules found'
+    #for rule in sorted(rules, key=lambda s: (len(s), s)):
+    #    print(rule)
+    print '\t=>',len(rules), 'rules found'
 
 def main():
     print_premises(find_uis(read_db(sys.argv[1])))
