@@ -13,7 +13,7 @@ from fca.io.input_models import PatternStructureModel
 from fca.io.sorters import PartitionSorter
 import csv
 
-from uis_miner_naive import find_uis, print_premises
+from lib.uis_miner import find_uis, print_premises
 
 
 
@@ -93,4 +93,4 @@ if __name__ == "__main__":
     print_premises(find_uis(ctx))
     print ("\t=> Execution Time: {} seconds".format(time.time()-t0))
     print "\t=> {} concepts in the representation context".format(len(ctx))
-    print '{}'.format(fout_name)
+    print '\t=> Partition Pattern Concepts Written in: {}'.format(fout_name)
