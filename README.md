@@ -15,8 +15,8 @@ Implementation used for comparison purposes on:
 
 ## Usage:
 
-- python tane.py [dataset]
-Example: python uis_miner_pps.py experimental_datasets/diagnostics.csv
+- python uis_miner_pps.py [dataset]
+  - Example: python uis_miner_pps.py experimental_datasets/diagnostics.csv
 
 ## Datasets Provided (./experimental_datasets/)
 - abalone.csv: https://archive.ics.uci.edu/ml/datasets/Abalone
